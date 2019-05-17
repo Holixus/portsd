@@ -4,9 +4,9 @@ PROJECT(socked)
 
 OPTION(HOST_DEBUG "Log to console" OFF)
 
-ADD_DEFINITIONS(-pipe --std=gnu99 -ftabstop=4 -fmax-errors=5 -Wno-unused-function)
+ADD_DEFINITIONS(-pipe --std=gnu99 -ftabstop=4 -Wno-unused-function)
 ADD_DEFINITIONS(-Wall -Wmissing-declarations -Winit-self -Wswitch-enum -Wundef -Wshadow)
-ADD_DEFINITIONS(-Wmissing-field-initializers -Wconversion -Wredundant-decls -Wpointer-arith)
+ADD_DEFINITIONS(-Wmissing-field-initializers -Wredundant-decls -Wpointer-arith)
 
 ADD_DEFINITIONS(-D_GNU_SOURCE)
 
