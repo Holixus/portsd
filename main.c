@@ -114,7 +114,7 @@ void start(int argc, char *argv[])
 			printf(
 "Usage: %s <options>\n\n\
 options:\n\
-  -s, --server=<ip:port>\t: defines CRS address;\n\
+  -s, --server=<ip:port>\t: ip/port of peer server;\n\
   -l, --listen=<ip:port>\t: ip/port to listen of connections;\n\
   -i, --iface=<interface>\t: to bind netword interace;\n\
   -d, --daemon\t\t\t: start as daemon;\n\
