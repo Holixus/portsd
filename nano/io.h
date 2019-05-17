@@ -46,6 +46,8 @@ void io_stream_free(io_stream_t *self);
 
 extern char const *io_prog_name;
 
+void die(char const *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+
 void start(int argc, char *argv[]);
 
 int io_init();

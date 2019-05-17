@@ -21,6 +21,8 @@
 #include "io_streams.i"
 #include "io_signals.i"
 
+#include "io_trace.i"
+
 #include "io_ipv4.i"
 #include "io_buf.i"
 #include "io_sock.i"

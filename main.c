@@ -38,19 +38,6 @@ static void free_all()
 		unlink(pid_file);
 }
 
-
-/* -------------------------------------------------------------------------- */
-static void die(char const *fmt, ...) __attribute__ ((format (printf, 1, 2)));
-
-static void die(char const *fmt, ...)
-{
-	va_list ap;
-	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
-	va_end(ap);
-	exit(1);
-}
-
 /* -------------------------------------------------------------------------- */
 typedef
 struct ip_sock_addr {
