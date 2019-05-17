@@ -1,11 +1,13 @@
 
+#define IO_BUFFER_SEGMENT_SIZE (2048)
+
 typedef struct io_seg io_seg_t;
 
 /* ------------------------------------------------------------------------ */
 struct io_seg {
 	io_seg_t *next;
 	char *begin, *end;
-	char data[2048 - 3 * sizeof (void*)];
+	char data[IO_BUFFER_SEGMENT_SIZE - 3 * sizeof (void*)];
 };
 
 typedef

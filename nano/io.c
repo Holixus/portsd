@@ -25,7 +25,7 @@
 
 #include "io_ipv4.i"
 #include "io_buf.i"
-#include "io_sock.i"
+#include "io_redir.i"
 
 #define MAX_ATEXIT_HANDLERS (10)
 

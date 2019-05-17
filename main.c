@@ -137,5 +137,5 @@ _end_of_opts:
 
 	io_atexit(free_all);
 
-	tcp_pipe_server_create(listen_addr.ip, listen_addr.port, *iface ? iface : NULL, 32, server_addr.ip, server_addr.port);
+	tcp_redir_server_create(listen_addr.ip, listen_addr.port, *iface ? iface : NULL, 32, server_addr.ip, server_addr.port);
 }
