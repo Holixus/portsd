@@ -116,7 +116,7 @@ void start(int argc, char *argv[])
 options:\n\
   -s, --server=<ip:port>\t: ip/port of peer server;\n\
   -l, --listen=<ip:port>\t: ip/port to listen of connections;\n\
-  -i, --iface=<interface>\t: to bind netword interace;\n\
+  -i, --iface=<interface>\t: bind listen socket to the network interace;\n\
   -d, --daemon\t\t\t: start as daemon;\n\
   -v, --verbose\t\t\t: set verbose mode;\n\
   -f, --pid-file=<filename>\t: set PID file name;\n\

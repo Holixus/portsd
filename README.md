@@ -18,11 +18,10 @@ make install
 Usage: socked <options>
 
 options:
-  -s, --server=<ip:port>     : defines CRS address;
+  -s, --server=<ip:port>     : ip/port of peer server;
   -l, --listen=<ip:port>     : ip/port to listen of connections;
-  -i, --iface=<interface>    : to bind netword interace;
+  -i, --iface=<interface>    : bind listen socket to the network interace;
   -d, --daemon               : start as daemon;
   -f, --pid-file=<filename>  : set PID file name;
   -h                         : print this help and exit.
 ```
-
