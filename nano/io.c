@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 	if (*io_prog_name == '/')
 		++io_prog_name;
 
-	openlog(io_prog_name, LOG_PERROR | LOG_PID, LOG_DAEMON);
+	openlog(io_prog_name, LOG_PERROR | LOG_PID, LOG_USER);
 
 	io_timers_init();
 	io_streams_init();
@@ -70,12 +70,13 @@ int main(int argc, char *argv[])
 
 	start(argc, argv);
 
-	openlog(io_prog_name, LOG_PERROR | LOG_PID, LOG_DAEMON);
+	if (getppid() == 1)
+		openlog(io_prog_name, LOG_PERROR | LOG_PID, LOG_DAEMON);
+
+	int ret;
 	do {
-		int ret = io_streams_poll(io_get_timeout());
-		if (!ret || (ret < 0 && errno != EINTR))
-			return ret;
-	} while (1);
+		ret = io_streams_poll(io_get_timeout());
+	} while (ret > 0 || (ret < 0 && errno == EINTR));
 
 	return 0;
 }
