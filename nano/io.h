@@ -61,16 +61,9 @@ void io_atexit(void_fn_t *fn);
 
 
 /* -------------------------------------------------------------------------- */
-typedef
-struct tcp_redir_server {
-	io_stream_t stream;
-	char iface[32];
-	uint32_t host_ip;
-	uint32_t host_port;
-} tcp_redir_server_t;
-
-tcp_redir_server_t *tcp_redir_server_create(uint32_t listen_ip, uint32_t listen_port, char const *iface, int listen_queue, uint32_t host_ip, uint32_t host_port);
+int tcp_reply_server_create(uint32_t listen_ip, uint32_t listen_port, char const *iface, int listen_queue);
 
 /* -------------------------------------------------------------------------- */
 unsigned int ipv4_atoi(char const *ip, char const **after);
+char const *ipv4_itoa(unsigned int num);
 

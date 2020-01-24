@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-PROJECT(socked)
+PROJECT(portsd)
 
 OPTION(HOST_DEBUG "Log to console" OFF)
 
@@ -12,17 +12,17 @@ ADD_DEFINITIONS(-D_GNU_SOURCE)
 
 FILE(GLOB SOURCES *.c nano/*.c)
 
-ADD_EXECUTABLE(socked ${SOURCES})
+ADD_EXECUTABLE(${CMAKE_PROJECT_NAME} ${SOURCES})
 
 IF(HOST_DEBUG)
 	ADD_DEFINITIONS(-O0 -g3)
 ELSE()
 	ADD_DEFINITIONS(-Os -Werror -fvisibility=hidden -ffast-math -fmerge-all-constants -ffunction-sections -fdata-sections)
-	SET_TARGET_PROPERTIES(socked PROPERTIES LINK_FLAGS -Wl,--gc-sections,-s)
+	SET_TARGET_PROPERTIES(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS -Wl,--gc-sections,-s)
 ENDIF()
 
 
-INSTALL(TARGETS socked
+INSTALL(TARGETS ${CMAKE_PROJECT_NAME}
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib
 	RUNTIME DESTINATION bin

@@ -25,7 +25,8 @@
 
 #include "io_ipv4.i"
 #include "io_buf.i"
-#include "io_redir.i"
+#include "io_tcp.i"
+#include "io_reply.i"
 
 #define MAX_ATEXIT_HANDLERS (10)
 

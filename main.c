@@ -8,6 +8,8 @@
 #include <getopt.h>
 
 #include <syslog.h>
+#include <regex.h>
+
 
 #include "nano/io.h"
 
@@ -43,32 +45,16 @@ typedef
 struct ip_sock_addr {
 	uint32_t ip;
 	uint32_t port;
+	uint32_t ports_num;
 } ip_sock_addr_t;
 
-/* -------------------------------------------------------------------------- */
-static void parse_addr(char const *arg, ip_sock_addr_t *addr)
-{
-	char const *srv;
-	addr->ip = ipv4_atoi(arg, &srv);
-	if (!srv) {
-		if (*optarg != ':')
-			die("invalid listen IP address");
-		else
-			srv = arg;
-	}
-
-	if (*srv == ':')
-		addr->port = (unsigned)atoi(srv + 1);
-}
 
 /* -------------------------------------------------------------------------- */
 void start(int argc, char *argv[])
 {
 	static struct option const long_options[] = {
 	/*     name, has_arg, *flag, chr */
-		{ "server",  1, 0, 's' },
-		{ "listen",  1, 0, 'l' },
-		{ "deamon",  0, 0, 'd' },
+		{ "daemon",  0, 0, 'd' },
 		{ "pid-file",1, 0, 'f' },
 		{ "verbose", 0, 0, 'v' },
 		{ "help",    0, 0, 'h' },
@@ -76,26 +62,12 @@ void start(int argc, char *argv[])
 	};
 
 	int daemon_mode = 0;
-	ip_sock_addr_t listen_addr = { 0, 80 }, server_addr = { 0, 80 };
-	char iface[64] = "";
 
 	for (;;) {
 		int option_index;
-		switch (getopt_long(argc, argv, "?hl:s:i:dvf:", long_options, &option_index)) {
+		switch (getopt_long(argc, argv, "?hdvf:", long_options, &option_index)) {
 		case -1:
 			goto _end_of_opts;
-
-		case 'l':;
-			parse_addr(optarg, &listen_addr);
-			break;
-
-		case 's':;
-			parse_addr(optarg, &server_addr);
-			break;
-
-		case 'i':
-			snprintf(iface, sizeof iface, "%s", optarg);
-			break;
 
 		case 'v':
 			verbose_mode = 1;
@@ -112,11 +84,8 @@ void start(int argc, char *argv[])
 		case 'h':
 		case '?':
 			printf(
-"Usage: %s <options>\n\n\
+"Usage: %s <options> [ip:port[-port]]+ \n\n\
 options:\n\
-  -s, --server=<ip:port>\t: ip/port of peer server;\n\
-  -l, --listen=<ip:port>\t: ip/port to listen of connections;\n\
-  -i, --iface=<interface>\t: bind listen socket to the network interace;\n\
   -d, --daemon\t\t\t: start as daemon;\n\
   -v, --verbose\t\t\t: set verbose mode;\n\
   -f, --pid-file=<filename>\t: set PID file name;\n\
@@ -124,7 +93,36 @@ options:\n\
 			return;
 		}
 	}
-_end_of_opts:
+_end_of_opts:;
+
+	ip_sock_addr_t servs[30];
+	int servs_num = 0;
+
+	if (optind < argc) {
+		regex_t r;
+		if (regcomp(&r, "^([0-9.]{7,15})?:([0-9]{1,5})(-[0-9]{1,5})?$", REG_EXTENDED) != 0) {
+			syslog(LOG_CRIT, "A");
+			exit(1);
+		}
+		for (; optind < argc; ++optind) {
+			regmatch_t m[10];
+			char *arg = argv[optind];
+			if (!regexec(&r, arg, 10, m, 0)) {
+				ip_sock_addr_t *s = servs + servs_num++;
+				s->ip = m[1].rm_so >= 0 ? ipv4_atoi(arg + m[1].rm_so, NULL) : 0;
+				s->port = atoi(arg + m[2].rm_so);
+				s->ports_num = (m[3].rm_so > 0) ? atoi(arg + m[3].rm_so + 1) - s->port + 1 : 1;
+				if (s->ports_num < 1) {
+					syslog(LOG_ERR, "invalid argument: '%s'", arg);
+					--servs_num;
+				} else
+					syslog(LOG_NOTICE, "listen server: %s:%d-%d", ipv4_itoa(s->ip), s->port, s->port + s->ports_num - 1);
+			} else {
+				syslog(LOG_ERR, "invalid argument: '%s'", arg);
+			}
+		}
+		regfree(&r);
+	}
 
 	if (daemon_mode) {
 		if (daemon(0, 0) < 0) {
@@ -137,5 +135,9 @@ _end_of_opts:
 
 	io_atexit(free_all);
 
-	tcp_redir_server_create(listen_addr.ip, listen_addr.port, *iface ? iface : NULL, 32, server_addr.ip, server_addr.port);
+	for (int i = 0; i < servs_num; ++i) {
+		ip_sock_addr_t *s = servs + i;
+		for (int n = 0; n < s->ports_num; ++n)
+			tcp_reply_server_create(s->ip, s->port + n, NULL, 32);
+	}
 }

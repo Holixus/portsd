@@ -30,10 +30,20 @@ static char *ipv4_itostr(char *p, unsigned int ip)
 	return p;
 }
 
+enum { IP_BUF_SIZE = 32 };
+
 /* ------------------------------------------------------------------------ */
-static char const *ipv4_itoa(unsigned int num)
+static char *_getIpBuf()
 {
-	static char buf[32];
+	static char buf[8][IP_BUF_SIZE];
+	static int index = 0;
+	return buf[index++ & 7];
+}
+
+/* ------------------------------------------------------------------------ */
+char const *ipv4_itoa(unsigned int num)
+{
+	char *buf = _getIpBuf();
 	ipv4_itostr(buf, num);
 	return buf;
 }

@@ -37,6 +37,9 @@ static void tcp_redir_event_handler(io_stream_t *stream, int events)
 		if (io_buf_send(&p->out, stream->fd) < 0) {
 			if (errno == ECONNRESET || errno == ENOTCONN || errno == EPIPE)
 				tcp_redir_free(stream);
+			else
+				if (io_buf_is_empty(&p->out))
+					stream->events &= ~POLLOUT;
 		}
 	}
 	if (events & POLLIN) {
