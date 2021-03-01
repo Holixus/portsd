@@ -59,7 +59,8 @@ static int io_tcp_write(io_stream_t *stream, char *data, size_t size)
 		data += sent;
 		size -= sent;
 	}
-	stream->events |= POLLOUT;
+	if (size)
+		stream->events |= POLLOUT;
 	return io_buf_write(&p->out, data, size);
 }
 
